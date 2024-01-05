@@ -1,0 +1,88 @@
+# This project was generated with Unknown using template: https://github.com/beeware/briefcase-template@v0.3.13
+[tool.briefcase]
+project_name = "App Projekt 2"
+bundle = "com.example"
+version = "0.0.1"
+url = "https://example.com/appprojekt2"
+license = "Other"
+author = "Student"
+author_email = "student@example.com"
+
+[tool.briefcase.app.appprojekt2]
+formal_name = "App Projekt 2"
+description = "My second application"
+long_description = """More details about the app should go here.
+"""
+icon = "src/appprojekt2/resources/appprojekt2"
+sources = [
+    "src/appprojekt2",
+]
+test_sources = [
+    "tests",
+]
+
+requires = ["matplotlib",
+    "pandas",
+    "numpy",
+]
+test_requires = [
+    "pytest",
+]
+
+[tool.briefcase.app.appprojekt2.macOS]
+requires = [
+    "std-nslog~=1.0.0"
+]
+
+[tool.briefcase.app.appprojekt2.linux]
+requires = [
+]
+
+[tool.briefcase.app.appprojekt2.linux.system.debian]
+system_requires = [
+]
+
+system_runtime_requires = [
+]
+
+[tool.briefcase.app.appprojekt2.linux.system.rhel]
+system_requires = [
+]
+
+system_runtime_requires = [
+]
+
+[tool.briefcase.app.appprojekt2.linux.system.arch]
+system_requires = [
+]
+
+system_runtime_requires = [
+]
+
+[tool.briefcase.app.appprojekt2.linux.appimage]
+system_requires = []
+linuxdeploy_plugins = []
+
+[tool.briefcase.app.appprojekt2.linux.flatpak]
+
+[tool.briefcase.app.appprojekt2.windows]
+requires = []
+
+# Mobile deployments
+[tool.briefcase.app.appprojekt2.iOS]
+supported = false
+
+[tool.briefcase.app.appprojekt2.android]
+supported = false
+
+# Web deployments
+[tool.briefcase.app.appprojekt2.web]
+supported = false
+
+# 2023-02-26: This is a workaround for briefcase#1089/pyscript#1204.
+extra_pyscript_toml_content = """
+[[runtimes]]
+src = "https://cdn.jsdelivr.net/pyodide/v0.22.1/full/pyodide.js"
+name = "Python runtime"
+lang = "python"
+"""
