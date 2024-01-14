@@ -276,12 +276,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 else:
                     # print(data['data'][0])
                     # append Daten an die Liste für die x-Achse (eigentlich nur die Anzahl an vergangenen Tagen)
-                    for i in range(days_counter):
-                        x.append(i+1)
+                    x.append(days_counter)
                     # append Daten an die Liste für die y-Achse. Hier brauchen wir die Fallzahlen.
                     # Diese müssen wir aus der response des API calls "ausschneiden"
-                    for corona_data in data['data']:
-                        y.append(corona_data['cases'])
+                    y.append(data['data'][0]['cases'])
 
                     # abfragen, ob scatter oder line plot
                     if self.main_window.rbScatter.isChecked():
