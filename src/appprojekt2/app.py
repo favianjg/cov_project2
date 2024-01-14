@@ -54,7 +54,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.corona_data_event = threading.Event()
         # implementieren Sie einen Thread, weisen Sie ihm die Methode self.stream_corona_data zu
         # und das Event als parameter
-        thread = threading.Thread(target=self.stream_corona_data, args=(self.corona_data_event,))
+        thread = threading.Thread(target=self.stream_corona_data, args=(self.corona_data_event,), daemon=True)
         # starten Sie den Thread
         thread.start()
 
@@ -77,8 +77,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.main_window.btnShowCorrelations.clicked.connect(self.show_correlation_matrix)
         # TODO: lösung
         # Beim Drücken der Buttons soll etwas mit dem Event gemacht werden
-        self.main_window.btnStartCoronaStream.clicked.connect(self.corona_data_event)
-        self.main_window.btnStopCoronaStream.clicked.connect(self.corona_data_event)
+        self.main_window.btnStartCoronaStream.clicked.connect(self.start_event)
+        self.main_window.btnStopCoronaStream.clicked.connect(self.stop_event)
 
     def open_data(self):
         """
@@ -259,7 +259,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 x = []
                 y = []
                 days_counter = 1
-                break
             else:
                 time.sleep(1) # bitte nicht entfernen
 
