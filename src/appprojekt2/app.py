@@ -51,12 +51,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # TODO: lösung
         # legen Sie ein Event an, dass es ermöglicht den Stream der Corona Fallzahlen zu starten und zu stoppen
-        ...
+        self.corona_data_event = threading.Event()
         # implementieren Sie einen Thread, weisen Sie ihm die Methode self.stream_corona_data zu
         # und das Event als parameter
-        ...
+        thread = threading.Thread(target=self.stream_corona_data, args=(self.corona_data_event,))
         # starten Sie den Thread
-        ...
+        thread.start()
 
         # call the UI handler
         self.button_handler()
@@ -77,8 +77,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.main_window.btnShowCorrelations.clicked.connect(self.show_correlation_matrix)
         # TODO: lösung
         # Beim Drücken der Buttons soll etwas mit dem Event gemacht werden
-        self.main_window.btnStartCoronaStream.clicked.connect(...)
-        self.main_window.btnStopCoronaStream.clicked.connect(...)
+        self.main_window.btnStartCoronaStream.clicked.connect(self.corona_data_event)
+        self.main_window.btnStopCoronaStream.clicked.connect(self.corona_data_event)
 
     def open_data(self):
         """
@@ -229,11 +229,17 @@ class MainWindow(QtWidgets.QMainWindow):
             event.accept()
             # TODO: lösung
             # hier etwas mit dem Event machen, sodass die API Anfrage gestoppt wird
-            ...
+            event.clear()
 
         else:
             print('Changed my mind')
             event.ignore()
+
+    def start_event(self):
+        self.corona_data_event.set()
+
+    def stop_event(self):
+        self.corona_data_event.clear()
 
     def stream_corona_data(self, e_start_stream: Event):
         """
@@ -242,24 +248,28 @@ class MainWindow(QtWidgets.QMainWindow):
         # TODO: lösung
         # variablen initialisieren
         # wir brauchen zwei Listen, eine für die x-Achse und eine für die y_Achse
-        ...
+        x = []
+        y = []
+        days_counter = 1
 
         while True:
             if not e_start_stream.is_set():
                 time.sleep(1) # bitte nicht entfernen
-                # variablen zurücksetzen (nur wenn Sie wollen, dass der Stream jedes Mal von Vorne anfängt
-                ...
-
+                # variablen zurücksetzen (nur wenn Sie wollen, dass der Stream jedes Mal von Vorne anfängt)
+                x = []
+                y = []
+                days_counter = 1
+                break
             else:
                 time.sleep(1) # bitte nicht entfernen
 
                 # das ist die URL für den API Call. Wir hängen hinten die Anzahl an Tagen an, wie weit zurück wir
                 # die Fallzahlen ausgegeben haben wollen
-                base_url = 'https://api.corona-zahlen.org/germany/history/cases/' + ...
+                base_url = "https://api.corona-zahlen.org/germany/history/cases/"+str(days_counter)
 
                 try:
                     # api call
-                    data = ...
+                    data = requests.get(base_url).json()
 
                 except requests.exceptions.JSONDecodeError:
                     print('Error pulling data')
@@ -267,22 +277,24 @@ class MainWindow(QtWidgets.QMainWindow):
                 else:
                     # print(data['data'][0])
                     # append Daten an die Liste für die x-Achse (eigentlich nur die Anzahl an vergangenen Tagen)
-                    ...
+                    for i in range(days_counter):
+                        x.append(i+1)
                     # append Daten an die Liste für die y-Achse. Hier brauchen wir die Fallzahlen.
                     # Diese müssen wir aus der response des API calls "ausschneiden"
-                    ...
+                    for corona_data in data['data']:
+                        y.append(corona_data['cases'])
 
                     # abfragen, ob scatter oder line plot
-                    if ...:
+                    if self.main_window.rbScatter.isChecked():
                         # scatter plot Liste x-Achse über Liste y-Achse
-                        self.main_window.plotDataset.scatter_plot(..., ..., 'Vergangene Tage', 'Corona Fälle',
+                        self.main_window.plotDataset.scatter_plot(x, y, 'Vergangene Tage', 'Corona Fälle',
                                                                   'Corona Fälle in Deutschland')
                     else:
                         # line plot
-                        self.main_window.plotDataset.line_plot(..., ..., 'Vergangene Tage', 'Corona Fälle',
+                        self.main_window.plotDataset.line_plot(x, y, 'Vergangene Tage', 'Corona Fälle',
                                                                'Corona Fälle in Deutschland')
                     # vergangene Tage inkrementieren (erhöhnen um eins)
-                    ...
+                    days_counter += 1
 
 
 def main():
