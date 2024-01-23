@@ -235,9 +235,11 @@ class MainWindow(QtWidgets.QMainWindow):
             print('Changed my mind')
             event.ignore()
 
+    # den Thread Event starten
     def start_event(self):
         self.corona_data_event.set()
 
+    # den Thread Event beenden
     def stop_event(self):
         self.corona_data_event.clear()
 
@@ -250,6 +252,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # wir brauchen zwei Listen, eine für die x-Achse und eine für die y_Achse
         x = []
         y = []
+        # zähl die Tage auf, die API kann mit 0 nicht anfangen deshalb starten wir mit die 1
         days_counter = 1
 
         while True:
@@ -264,6 +267,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 # das ist die URL für den API Call. Wir hängen hinten die Anzahl an Tagen an, wie weit zurück wir
                 # die Fallzahlen ausgegeben haben wollen
+                # ergänz den URL mit der Tagesanzahl
                 base_url = "https://api.corona-zahlen.org/germany/history/cases/"+str(days_counter)
 
                 try:
@@ -276,9 +280,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 else:
                     # print(data['data'][0])
                     # append Daten an die Liste für die x-Achse (eigentlich nur die Anzahl an vergangenen Tagen)
+                    # Fügt die Tagesanzahl hinzu
                     x.append(days_counter)
                     # append Daten an die Liste für die y-Achse. Hier brauchen wir die Fallzahlen.
                     # Diese müssen wir aus der response des API calls "ausschneiden"
+                    # Extrahiert die Fallzahlen aus dem Datei-Inhalt
                     y.append(data['data'][0]['cases'])
 
                     # abfragen, ob scatter oder line plot
